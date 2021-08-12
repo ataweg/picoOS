@@ -1,5 +1,30 @@
 // --------------------------------------------------------------------------
 //
+// MIT License
+//
+// Copyright (c) 2021 Axel Werner (ataweg)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+// --------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------
+//
 // Project       MidiMerge
 //
 // File          Axel Werner
@@ -29,8 +54,8 @@ extern unsigned long posMillis( void );
 unsigned char currentTask;
 unsigned char numTasks;
 
-stackPtrType taskStackPtrList[ 1 + MAX_TASKS]; // main program counts as task zero
-stackPtrType taskMaxStackPtrList[ 1 + MAX_TASKS];
+stackPtrType taskStackPtrList[ 1 + MAX_TASKS ]; // main program counts as task zero
+stackPtrType taskMaxStackPtrList[ 1 + MAX_TASKS ];
 stackPtrType stackEnd;
 
 posSemaphores_t posSemaphores = 0;
@@ -72,7 +97,7 @@ void posTaskSwitch( signed char taskID )
 
       // save the stack pointer of the current task
       stackPtrReg = SP;
-      taskStackPtrList[ currentTask] = stackPtrReg;
+      taskStackPtrList[ currentTask ] = stackPtrReg;
 
       if( taskID == NEXT_TASK )
       {
@@ -90,7 +115,7 @@ void posTaskSwitch( signed char taskID )
       }
 
       // get stack pointer from the taskStackPtrList
-      stackPtrReg = taskStackPtrList[ currentTask];
+      stackPtrReg = taskStackPtrList[ currentTask ];
 
       // load stack pointer register
       SP = stackPtrReg;
@@ -149,7 +174,7 @@ unsigned char posCreateTask( taskFunctionType task, stackSizeType stack_size )
 
       // setup context area on the stack of the newly created task
       newStackPtr = posInitialiseStack( newStackPtr, task );
-      taskStackPtrList[ newTaskId] = newStackPtr;
+      taskStackPtrList[ newTaskId ] = newStackPtr;
       taskMaxStackPtrList[ newTaskId ] = stackEnd;
 
       rc = newTaskId;
@@ -205,7 +230,7 @@ posSemaphores_t posSemaphoreTake( posSemaphores_t semaphores )
 posSemaphores_t posSemaphoreGet( posSemaphores_t semaphores )
 {
    posSemaphores_t semaphores_current = posSemaphores & semaphores;
-   return semaphores_current ;
+   return semaphores_current;
 }
 
 // --------------------------------------------------------------------------
@@ -263,3 +288,36 @@ void yield( void )
 // --------------------------------------------------------------------------
 //
 // --------------------------------------------------------------------------
+
+static posSemaphores_t posMemoryLockCounter = 0;
+static unsigned char   posMemoryLockTask = 0;
+
+posSemaphores_t posMemoryLock( void )
+{
+   // do the current task set the lock
+   while( ( posMemoryLockCounter != 0 ) && ( currentTask != posMemoryLockTask ) )
+   {
+      // othen we have to wait
+      posNextTask();
+   }
+
+   posMemoryLockTask = currentTask;
+   posMemoryLockCounter++;
+
+   return posMemoryLockCounter;
+}
+
+posSemaphores_t posMemoryUnlock( void )
+{
+   // the task who set the lock, can also remove it
+   if( ( posMemoryLockCounter != 0 ) && ( currentTask == posMemoryLockTask ) )
+   {
+      posMemoryLockCounter--;
+   }
+   return posMemoryLockCounter;
+}
+
+// --------------------------------------------------------------------------
+//
+// --------------------------------------------------------------------------
+
