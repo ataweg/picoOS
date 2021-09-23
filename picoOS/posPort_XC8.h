@@ -58,12 +58,12 @@
 #endif
 
 // Critical section management.
-#define posENTER_CRITICAL()                                   \
+#define posENTER_CRITICAL()                                    \
             asm volatile ( "in   __tmp_reg__, __SREG__" ::);   \
             asm volatile ( "cli" ::);                          \
             asm volatile ( "push __tmp_reg__" ::)
 
-#define posEXIT_CRITICAL()                                    \
+#define posEXIT_CRITICAL()                                     \
             asm volatile ( "pop  __tmp_reg__" ::);             \
             asm volatile ( "out  __SREG__, __tmp_reg__" ::)
 
@@ -81,7 +81,7 @@ copied into INTCON when a task switches in for the first time. */
 
 /* Constant used for context switch macro when we require the interrupt
 enable state to be unchanged when the interrupted task is switched back in. */
-#define posINTERRUPTS_UNCHANGED       0x00
+#define posINTERRUPTS_UNCHANGED          0x00
 
 /* Some memory areas get saved as part of the task context.  These memory
 area's get used by the compiler for temporary storage, especially when
@@ -112,14 +112,14 @@ constant defines the size of memory area which must be saved. */
 //   save the complete(?) HW stack
 // ...
 
-#define  posSAVE_CONTEXT()             \
+#define  posSAVE_CONTEXT()              \
 {                                       \
    /* Save the status and WREG registers first, as these will get modified \
    by the operations below. */          \
    asm( "MOVFF WREG, PREINC1        "); \
    asm( "MOVFF STATUS, PREINC1      "); \
                                         \
-   posDISABLE_INTERRUPTS();            \
+   posDISABLE_INTERRUPTS();             \
                                         \
    /* Store the necessary registers to the stack. */ \
    asm( "MOVFF BSR, PREINC1         "); \
@@ -186,7 +186,7 @@ constant defines the size of memory area which must be saved. */
 // FSR1  => SP
 // FSR0  => working regsiter, index
 
-#define posRESTORE_CONTEXT()           \
+#define posRESTORE_CONTEXT()            \
 {                                       \
    /* How many return addresses are there on the hardware stack?  Discard  \
    the first byte as we are pointing to the next free space. */ \

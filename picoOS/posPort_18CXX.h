@@ -78,7 +78,7 @@ copied into INTCON when a task switches in for the first time. */
 
 /* Constant used for context switch macro when we require the interrupt
 enable state to be unchanged when the interrupted task is switched back in. */
-#define posINTERRUPTS_UNCHANGED       0x00
+#define posINTERRUPTS_UNCHANGED          0x00
 
 /* Some memory areas get saved as part of the task context.  These memory
 area's get used by the compiler for temporary storage, especially when
@@ -109,7 +109,7 @@ constant defines the size of memory area which must be saved. */
 //   save the complete(?) HW stack
 // ...
 
-#define  posSAVE_CONTEXT()            \
+#define  posSAVE_CONTEXT()             \
 {                                      \
    _asm                                \
       /* Save the status and WREG registers first, as these will get modified \
@@ -118,7 +118,7 @@ constant defines the size of memory area which must be saved. */
       MOVFF STATUS, PREINC1            \
    _endasm                             \
                                        \
-   posDISABLE_INTERRUPTS();           \
+   posDISABLE_INTERRUPTS();            \
                                        \
    _asm                                \
    /* Store the necessary registers to the stack. */ \
@@ -191,7 +191,7 @@ constant defines the size of memory area which must be saved. */
 // FSR1  => SP
 // FSR0  => working regsiter, index
 
-#define posRESTORE_CONTEXT()          \
+#define posRESTORE_CONTEXT()           \
 {                                      \
    _asm                                \
       /* How many return addresses are there on the hardware stack?  Discard  \

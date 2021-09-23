@@ -71,12 +71,12 @@ typedef unsigned char stackPtrType;
 #define posSTACK_GROWTH            ( -1 )
 
 // Critical section management.
-#define posENTER_CRITICAL()                                   \
+#define posENTER_CRITICAL()                                    \
             asm volatile ( "in   __tmp_reg__, __SREG__" ::);   \
             asm volatile ( "cli" ::);                          \
             asm volatile ( "push __tmp_reg__" ::)
 
-#define posEXIT_CRITICAL()                                    \
+#define posEXIT_CRITICAL()                                     \
             asm volatile ( "pop  __tmp_reg__" ::);             \
             asm volatile ( "out  __SREG__, __tmp_reg__" ::)
 

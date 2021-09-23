@@ -48,9 +48,6 @@
 #elif defined(__AVR__)
    #include "posPort_AVRGCC.h"
 
-#elif defined(__RL78__ )
-   #include "posPort_RL78.h"
-
 #elif defined( __18CXX)
    #include "posPort_18CXX.h"
 
@@ -123,12 +120,14 @@ posSemaphores_t posSemaphoreTake( posSemaphores_t semaphores );
 posSemaphores_t posSemaphoreGet( posSemaphores_t semaphores );
 posSemaphores_t posSemaphoreWait( posSemaphores_t semaphores, unsigned long timeout );
 
+#ifdef USE_POS_MEMORY_LOCK
 // some build in Mutex, Semaphores
 posSemaphores_t posMemoryLock( void );
 posSemaphores_t posMemoryUnlock( void );
+#endif
 
 // --------------------------------------------------------------------------
-// post related functions
+// port related functions
 // --------------------------------------------------------------------------
 
 stackPtrType posInitialiseStack( stackPtrType newStackPtr, taskFunctionType task ); // defined in posPort_XXX.c
@@ -136,9 +135,15 @@ stackPtrType posInitialiseStack( stackPtrType newStackPtr, taskFunctionType task
 #ifdef USE_POS_TIMER
 void posTimerSetup( stackPtrType timerTicksPerSecond );
 void posTimerISR( void );
-unsigned long posMillis( void );
 #endif
-// macros defined in the port impemetation
+
+#ifdef ARDUINO
+unsigned long posMillis( void );
+#else
+   #define posMillis     millis
+#endif
+
+// macros defined in the port implementation
 // posDISABLE_INTERRUPTS()
 // posENABLE_INTERRUPTS()
 // posSAVE_CONTEXT()

@@ -138,7 +138,7 @@ void posTaskSwitch( signed char taskID )
 
 void posWait( unsigned char( *waitForReadyFunc )( void ) )
 {
-   while( ( *waitForReadyFunc)() == 0 )
+   while( ( *waitForReadyFunc )() == 0 )
    {
       // save address of the wait function to stack
       posPushShort( waitForReadyFunc );
@@ -289,6 +289,7 @@ void yield( void )
 //
 // --------------------------------------------------------------------------
 
+#ifdef USE_POS_MEMORY_LOCK
 static posSemaphores_t posMemoryLockCounter = 0;
 static unsigned char   posMemoryLockTask = 0;
 
@@ -316,7 +317,7 @@ posSemaphores_t posMemoryUnlock( void )
    }
    return posMemoryLockCounter;
 }
-
+#endif
 // --------------------------------------------------------------------------
 //
 // --------------------------------------------------------------------------
